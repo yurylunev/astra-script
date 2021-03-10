@@ -1,10 +1,12 @@
 #!/bin/bash
-#echo "Введите название папки:"
-#read folder
-
-folder=/docs
-admin=admin1
-password=22222
+echo "Введите название папки:"
+read folder
+echo "Введите имя пользователя администратора:"
+read admin
+echo "Введите пароль, который будет установлен ВСЕМ пользователям:"
+read password
+echo "Сменить пароль пользователю при входе в систему? [y/n]"
+read chage
 share_group=share_users
 share_folder=share
 LEVELS_NAME=(НС ДСП С СС)
@@ -15,6 +17,7 @@ groups_by_default=audio,cdrom,plugdev,scanner,video,share_users
 
 cp skel/profile /etc/profile
 cp -R skel/.config/* /usr/share/fly-wm/config
+sed -i 's/$folder/file:\/\/\/${folder}/' /usr/share/fly-wm/config/libreoffice/4/user/registrymodifications.xcu
 
 USERS=($(awk 'BEGIN{FS=", "} {print $1}' users))
 USERS_LEVEL=($(awk 'BEGIN{FS=", "} {print $2}' users))
@@ -24,6 +27,9 @@ do
 	username=${USERS[user_id]}
 	user_level=${USERS_LEVEL[user_id]}
 	useradd --groups $groups_by_default --shell /bin/bash -m $username
+	if ["$chage" = "y"]; then
+		chage --lastday 0 $username
+	fi
 	echo $username:$password | sudo chpasswd
 	pdpl-user $username --level 0:$user_level
 done
