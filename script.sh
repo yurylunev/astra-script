@@ -15,8 +15,8 @@ groupadd $share_group
 
 groups_by_default=audio,cdrom,plugdev,scanner,video,share_users
 
-cp skel/profile /etc/profile
-cp -R skel/.config/* /usr/share/fly-wm/config
+cp profile /etc/profile
+cp -R config/* /usr/share/fly-wm/config
 sed -i 's/$folder/file:\/\/\/${folder}/' /usr/share/fly-wm/config/libreoffice/4/user/registrymodifications.xcu
 
 USERS=($(awk 'BEGIN{FS=", "} {print $1}' users))
